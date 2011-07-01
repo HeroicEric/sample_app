@@ -62,6 +62,16 @@ describe UsersController do
         response.should render_template('new')
       end
 
+      it "should reset the user password field" do
+        post :create, :user => @attr.merge(:password => "1234")
+        response.should have_selector("input[name='user[password]'][value='']")
+      end
+
+      it "should reset the user password_confirmation field" do
+        post :create, :user => @attr.merge(:password_confirmation => "1234")
+        response.should have_selector("input[name='user[password_confirmation]'][value='']")
+      end
+
     end # end failure
 
     describe "success" do
@@ -85,6 +95,11 @@ describe UsersController do
       it "should have a welcome message" do
         post :create, :user => @attr
         flash[:success].should =~ /welcome to the sample app/i
+      end
+
+      it "should sign the user in" do
+        post :create, :user => @attr
+        controller.should be_signed_in
       end
 
     end # end success
